@@ -1,0 +1,32 @@
+<?php
+
+
+
+/**
+ * Implements hook_mail().
+ */
+
+function dmail_mail($key, &$message, $params) {
+  $options = array(
+    'langcode' => $message['langcode'],
+  );
+
+  switch ($key) {
+    case 'contact_sent':
+      $message['from'] = \Drupal::config('system.site')->get('mail');
+      $message['subject'] = t('New message from @name',array('@name' => $params['name']), $options);
+      $message['body'][] = t('New contact:
+      Contact name: @name
+      Contact email: @email
+      Contact telephone number: @number
+      Contact address: @address
+      Contact message: @message.'
+          ,array(
+              '@message' => $params['message'],
+              '@address'=> $params['address'],
+              '@name'=> $params['name'],
+              '@email'=> $params['email'],
+              '@number'=> $params['number'],), $options);
+      break;
+  }
+}
